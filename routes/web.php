@@ -43,7 +43,7 @@ Route::get('/test', function () {
         $app_version->version = $meta->version;
         $app_version->web_app_id = $app->id;
         $app_version->logo_url = ""; //TODO
-        $app_version->code_bundle_url = ""; //TODO
+        $app_version->code_bundle_url = put_file(join_paths($savedir, 'app.js'));
         $app_version->save();
     }
 
@@ -55,7 +55,7 @@ Route::get('/test', function () {
             $dep->dependency_name = $depName;
             $dep->dependency_version = $depVersion;
             $dep->dependency_name_version = $depName . '_' . $depVersion;
-            $dep->code_bundle_url = ""; //TODO
+            $dep->code_bundle_url = put_file(join_paths($savedir, 'deps', $depName . '_' . $depVersion . '.js'));
             $dep->save();
         }
         $webapp_dep = new \App\WebAppHasWebAppDependency();
