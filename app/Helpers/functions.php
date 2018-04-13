@@ -30,3 +30,8 @@ function rrmdir($dir) {
         rmdir($dir);
     }
 }
+
+function error($msg, $code = 500)
+{
+    return Response::json(['errMsg' => $msg], $code);
+}
