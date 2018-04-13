@@ -16,8 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-//    $savedir = join_paths(getcwd(), "tmp_" . str_random(10));
-    $savedir = join_paths(getcwd(), "tmp_");
+    $savedir = join_paths(getcwd(), "tmp_" . str_random(10));
     try {
         $phar = new PharData('test.tar.gz');
         $phar->extractTo($savedir);
@@ -63,6 +62,6 @@ Route::get('/test', function () {
         $webapp_dep->web_app_version_id = $app_version->id;
         $webapp_dep->save();
     }
-
+    rrmdir($savedir);
     \DB::commit();
 });
