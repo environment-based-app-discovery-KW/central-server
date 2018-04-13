@@ -12,7 +12,7 @@ function join_paths() {
 function put_file($file_path)
 {
     $hash = hash_file('sha256', $file_path);
-    copy($file_path, storage_path(join_paths('files_bucket', $hash)));
+    copy($file_path, join_paths(env('FILE_BUCKET_PATH'), $hash));
     return $hash;
 }
 
