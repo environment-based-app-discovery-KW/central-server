@@ -11,10 +11,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $web_app_id
  * @property string $version
- * @property string $code_bundle_url
+ * @property string $code_bundle_hash
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\WebAppVersion whereCodeBundleUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\WebAppVersion whereCodeBundleHash($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\WebAppVersion whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\WebAppVersion whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\WebAppVersion whereUpdatedAt($value)
