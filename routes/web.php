@@ -23,6 +23,10 @@ Route::group(['prefix' => 'payment'], function () {
     Route::post('submit', 'PaymentController@submit');
 });
 
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/', 'Admin\AdminPaymentController@index');
+});
+
 Route::get('/test', function () {
 
 });
