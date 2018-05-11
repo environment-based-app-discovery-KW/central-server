@@ -23,5 +23,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 class User extends Model
 {
-    //
+    public static function findByPublicKey($publicKey)
+    {
+        $publicKey = preg_replace('/\s/', '', $publicKey);
+        $user = User::wherePublicKey($publicKey)->first();
+        if (!$user) {
+            $user = new User();
+            $user->name = "";
+            $user->info_json = "";
+            $user->public_key = $publicKey;
+            $user->save();
+        }
+        return $user;
+    }
 }

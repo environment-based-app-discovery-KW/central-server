@@ -24,4 +24,9 @@ use Illuminate\Database\Eloquent\Model;
 class WebApp extends Model
 {
     protected $connection = 'app-repo-server';
+
+    public static function findByName($name)
+    {
+        return WebApp::whereName($name)->first();
+    }
 }

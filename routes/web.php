@@ -19,6 +19,10 @@ Route::group(['prefix' => 'app'], function () {
     Route::post('upload', 'WebAppController@upload');
 });
 
+Route::group(['prefix' => 'payment'], function () {
+    Route::post('submit', 'PaymentController@submit');
+});
+
 Route::get('/test', function () {
 
 });
