@@ -17,11 +17,13 @@ class CreatePaymentsTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('webapp_id');
-            $table->integer('developer_id');
             $table->longText('package');
             $table->longText('signature');
-            $table->integer('paid')->default(0);
-            $table->integer('developer_notified')->default(0);
+            $table->longText('order_id');
+            $table->longText('order_title');
+            $table->longText('order_description');
+            $table->text('timestamp');
+            $table->integer('amount_paid');
             $table->timestamps();
         });
     }
