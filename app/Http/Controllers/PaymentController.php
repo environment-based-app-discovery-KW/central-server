@@ -28,6 +28,9 @@ class PaymentController extends Controller
         if (!$webapp) {
             return error("Invalid app name");
         }
+        if (Payment::whereWebappId($webapp->id)->whereOrderId($signedContent->order_id)->exists()) {
+            return error("Payment id already submitted");
+        }
         $payment = new Payment();
         $payment->user_id = User::findByPublicKey($publicKey)->id;
         $payment->webapp_id = $webapp->id;
