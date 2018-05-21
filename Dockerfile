@@ -61,7 +61,7 @@ EXPOSE 889
 
 # import init data
 WORKDIR /tmp
-ADD http://7xn0vy.dl1.z0.glb.clouddn.com/file-bucket-init-data-5.20.tar.gz /var/file-bucket/file-bucket-init-data.tar.gz
+ADD http://7xn0vy.dl1.z0.glb.clouddn.com/file-bucket-init-data-5.21.tar.gz /var/file-bucket/file-bucket-init-data.tar.gz
 WORKDIR /var/file-bucket
 RUN tar xvfz file-bucket-init-data.tar.gz && rm file-bucket-init-data.tar.gz
 
