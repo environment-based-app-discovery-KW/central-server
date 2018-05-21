@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\WebApp;
-use App\WebAppDependency;
-use App\WebAppHasWebAppDependency;
-use App\WebAppVersion;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use PharData;
 
 /**
@@ -25,9 +20,12 @@ class WebAppController extends Controller
             return error("");
         }
         $file = $request->file('targz');
-        $savedir = join_paths(getcwd(), "tmp_" . str_random(10));
+        $newname = str_random(10) . '.tar.gz';
+        $newpath = storage_path($newname);
+        rename($file->path(), $newpath);
+        $savedir = storage_path("extract_" . $newname);
         try {
-            $phar = new PharData($file->path());
+            $phar = new PharData($newpath);
             $phar->extractTo($savedir);
         } catch (Exception $e) {
             throw new Exception("Error extracting tar");
@@ -72,6 +70,7 @@ class WebAppController extends Controller
             $webapp_dep->save();
         }
         rrmdir($savedir);
+        unlink($newpath);
         \DB::commit();
         $successful = true;
         return compact('app', 'app_version', 'successful');
