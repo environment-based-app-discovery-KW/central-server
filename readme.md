@@ -1,59 +1,38 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# central-server
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+central-server: 主数据管理服务器
 
-## About Laravel
+主数据管理服务器是一个中心化服务器，用来管理用户数据、APP数据、维护根据地理位置发现APP时需要使用的元数据、管理APP内支付。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+开发者把构建好的应用程序包上传到主数据管理服务器，服务器会对它进行解包分析处理。会读取压缩包内的```meta.json```文件，以辨别APP的名称、版本、依赖项信息。随后，服务器会分别对业务代码和依赖库计算哈希并存入文件库，并在数据库中插入相应的实体数据、关联数据。同时，开发者可以设置APP发现的具体参数：在什么经度和纬度、多少米范围内可见该APP、在这个条件下启动该APP所携带的参数。这些数据会被插入到中央应用仓库服务器中，镜像自动同步工具会把这些数据同步到世界上所有别的节点，这样，APP发布就完成了。
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+主数据管理服务器的另一个作用是APP内支付代扣。为了方便与统一APP内的支付，本架构中不建议开发者自己接入支付服务，而是另外开发了一套基于数字签名的用户支付授权体系。开发者可以在APP内调用一个统一的接口，请求用户支付，用户同意之后开发者会得到一个带有用户数字签名的支付单，需经由自己的后端转发给主服务器。主服务器就担任了验证用户数字签名、支付信息留档、联系银行转款给开发者的角色。
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
+主服务器在现在的架构中，全世界只有一台，由一个机构专门管理。如果真正上线运行，主服务器的负载是会非常大的，好在主服务器的业务都可以横向拓展。真正部署时，需使用多实例、负载均衡的方式部署主服务器。
 
-## Learning Laravel
+## 路由
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
+```php
+Route::group(['prefix' => 'app'], function () {
+    Route::any('ls', 'WebAppController@ls');
+    Route::any('discover', 'WebAppController@discover');
+    Route::any('lan-discover', 'WebAppController@lanDiscover');
+    Route::any('download', 'WebAppController@download');
+});
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+Route::group(['prefix' => 'sync'], function () {
+    Route::any('/', 'SyncController@index');
+});
 
-## Laravel Sponsors
+Route::group(['prefix' => 'file'], function () {
+    Route::any('/download', 'FileController@download');
+});
+```
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
+## Docker 部署方法
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Pulse Storm](http://www.pulsestorm.net/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
+```
+docker build -t central_server_image .
+docker run -p 0.0.0.0:888:888 -p 0.0.0.0:889:889 --name central_server_container -t central_server_image
+```
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
